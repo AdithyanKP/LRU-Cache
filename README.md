@@ -13,7 +13,7 @@ This repository provides an LRU Cache implementation using Golang for the backen
 git clone <repository-url>
 ```
 
-_Replace `<repository-url>` with the actual URL of the ACL block repository._
+_Replace `<repository-url>` with the actual URL of the repository._
 
 ## Usage
 To build and run the application:
