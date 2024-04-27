@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  golang-app:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+    command: bash -c "go run ./main.go "
+
+  react-app:
+    build:
+      context: ./Frontend/app
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5174"
+      - "3001:3001" 
+    command: bash -c "npm run dev "

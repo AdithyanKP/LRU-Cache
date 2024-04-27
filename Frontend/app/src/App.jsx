@@ -3,18 +3,20 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import { BASE_URL } from "./constants";
 
 function App() {
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
-  const [expirationDuration, SetExpirationDuration] = useState(5);
+  const [expirationDuration, SetExpirationDuration] = useState();
   const [getResponse, setGetResponse] = useState(null);
+
+
 
   const handleGet = async () => {
     try {
       setGetResponse(null);
-      const response = await axios.get(`http://localhost:8080/get?key=${key}`);
-      console.log("response", response);
+      const response = await axios.get(`${BASE_URL}/get?key=${key}`);
       setGetResponse(response.data);
       toast("Cache retrived successFully", {
         position: "top-right",
@@ -44,13 +46,14 @@ function App() {
 
   const handleSet = async () => {
     try {
-      await axios.post("http://localhost:8080/set", {
+      await axios.post(`${BASE_URL}/set`, {
         key,
         value,
         Expiration: parseInt(expirationDuration),
       });
       setKey("");
       setValue("");
+      SetExpirationDuration(5)
       setGetResponse(null);
       toast("Cache added successfully", {
         position: "top-right",
@@ -80,7 +83,7 @@ function App() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/delete?key=${key}`);
+      await axios.delete(`${BASE_URL}/delete?key=${key}`);
       setGetResponse(null);
       toast("Cache removed successfully", {
         position: "top-right",
@@ -141,7 +144,7 @@ function App() {
           type="text"
           value={expirationDuration}
           onChange={(e) => SetExpirationDuration(e.target.value)}
-          placeholder="Expiration"
+          placeholder="Expiration value in seconds"
         />
         <div className="buttons-container">
           <button onClick={handleSet}>Set</button>
