@@ -26,6 +26,12 @@ type LRUCache struct {
 	mutex        sync.RWMutex
 }
 
+type SetRequest struct {
+	Key        string      `json:"key"`
+	Value      interface{} `json:"value"`
+	Expiration int         `json:"expiration"`
+}
+
 func (lru *LRUCache) PrintCache() {
 	lru.mutex.RLock()
 	defer lru.mutex.RUnlock()
@@ -140,17 +146,23 @@ func handleGet(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, value)
+	response := map[string]interface{}{
+		"key":   key,
+		"value": value,
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 func handleSet(c *gin.Context) {
-	var item CacheItem
+	var item SetRequest
 	if err := c.BindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON payload"})
 		return
 	}
+	log.Printf(">>>>>>>>>>>> :%d ", item.Expiration)
+	expirationDuration := time.Duration(item.Expiration) * time.Second
 
-	cache.Set(item.Key, item.Value, 5*time.Second) // Assuming expiration time of 5 seconds
+	cache.Set(item.Key, item.Value, expirationDuration)
 	cache.PrintCache()
 
 	c.Status(http.StatusCreated)

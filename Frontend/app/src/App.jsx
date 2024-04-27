@@ -1,15 +1,16 @@
-// App.js
-import React, { useState } from 'react';
-import axios from 'axios';
-import './App.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "./App.css";
 
 function App() {
-  const [key, setKey] = useState('');
-  const [value, setValue] = useState('');
+  const [key, setKey] = useState("");
+  const [value, setValue] = useState("");
+  const [expirationDuration, SetExpirationDuration] = useState(20);
   const [getResponse, setGetResponse] = useState(null);
 
   const handleGet = async () => {
     try {
+      setGetResponse(null);
       const response = await axios.get(`http://localhost:8080/get?key=${key}`);
       setGetResponse(response.data);
     } catch (error) {
@@ -19,9 +20,13 @@ function App() {
 
   const handleSet = async () => {
     try {
-      await axios.post('http://localhost:8080/set', { key, value });
-      setKey('');
-      setValue('');
+      await axios.post("http://localhost:8080/set", {
+        key,
+        value,
+        Expiration: expirationDuration,
+      });
+      setKey("");
+      setValue("");
       setGetResponse(null);
     } catch (error) {
       console.error(error);
@@ -44,13 +49,13 @@ function App() {
         <input
           type="text"
           value={key}
-          onChange={e => setKey(e.target.value)}
+          onChange={(e) => setKey(e.target.value)}
           placeholder="Key"
         />
         <input
           type="text"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           placeholder="Value"
         />
         <button onClick={handleSet}>Set</button>
@@ -59,7 +64,8 @@ function App() {
       </div>
       {getResponse && (
         <p className="response">
-          Value for key <strong>{key}</strong>: {JSON.stringify(getResponse)}
+          Value for key <strong>{getResponse?.key}</strong>:{" "}
+          {getResponse?.value}
         </p>
       )}
     </div>
